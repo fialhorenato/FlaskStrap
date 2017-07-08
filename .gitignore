@@ -1,0 +1,11 @@
+# All the pyc files
+
+*.pyc
+
+# The .vscode folder
+
+/.vscode
+
+# The VirtualEnv folder
+
+/venv
