@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from config.dev import DevConfig
 import json
 from models.Shared import db
@@ -15,11 +15,31 @@ def create_user():
         user = User(username, email)
 
         try:
-            db.session.add(user)
-            db.session.commit()
-            return json.dumps(user)
+            user.save()
+            response = user._toJson_()
+            response.status_code = 201
+            return response
         except Exception as e:
-            return json.dumps(e.message)
+            response = jsonify({
+                    'error': e.message,
+            })
+            response.status_code = 400
+            return response
+
+@app.route('/user/<username>')
+def getUser(username):
+    try:
+        data = request.json
+        user = User.query.filter_by(username=username).first()
+        response = user._toJson_()
+        response.status_code = 200
+        return response
+    except Exception as e:
+        response = jsonify({
+                    'error': e.message,
+        })
+        response.status_code = 400
+        return response
 
 
 if __name__ == '__main__':
